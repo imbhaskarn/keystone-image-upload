@@ -65,15 +65,26 @@ export const lists: Lists = {
     access: allowAll, // this is the fields for our Post list
     fields: {
       title: text({ validation: { isRequired: true } }),
-      cover: image({ storage: "my_local_images" }, ),
+      cover: image({ storage: "my_local_images" }),
       coverCropped: image({ storage: "my_local_images" }),
     },
     hooks: {
       resolveInput: ({ resolvedData }) => {
-        (resolvedData.coverCropped.extension = resolvedData.cover.extension),
-          (resolvedData.coverCropped.height = 200);
-        resolvedData.coverCropped.width = 200;
-        resolvedData.coverCropped.id = resolvedData.cover.id + "-cropped";
+        const { title, cover, coverCropped } = resolvedData;
+        let croppedImage = {
+          id: cover.id + "-cropped",
+          extension: cover.extension,
+          width: 400,
+          height: 400,
+          filesize: cover.filesize,
+        };
+        if (title) {
+          return {
+            ...resolvedData,
+            coverCropped: croppedImage,
+            title: title,
+          };
+        }
         return resolvedData;
       },
       afterOperation: ({ operation, item }) => {

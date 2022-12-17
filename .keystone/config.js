@@ -78,9 +78,21 @@ var lists = {
     },
     hooks: {
       resolveInput: ({ resolvedData }) => {
-        resolvedData.coverCropped.extension = resolvedData.cover.extension, resolvedData.coverCropped.height = 200;
-        resolvedData.coverCropped.width = 200;
-        resolvedData.coverCropped.id = resolvedData.cover.id + "-cropped";
+        const { title, cover, coverCropped } = resolvedData;
+        let croppedImage = {
+          id: cover.id + "-cropped",
+          extension: cover.extension,
+          width: 400,
+          height: 400,
+          filesize: cover.filesize
+        };
+        if (title) {
+          return {
+            ...resolvedData,
+            coverCropped: croppedImage,
+            title
+          };
+        }
         return resolvedData;
       },
       afterOperation: ({ operation, item }) => {
